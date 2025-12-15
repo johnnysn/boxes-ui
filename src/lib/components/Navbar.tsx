@@ -1,7 +1,13 @@
-import logo from "../assets/logo-prim.svg";
+import { useContext } from "react";
+import logo from "../../assets/logo-prim.svg";
 import { Link } from "@tanstack/react-router";
+import { UserContext } from "../../context";
+import useLogout from "../hooks/useLogout";
 
 export default function Navbar() {
+  const { user } = useContext(UserContext);
+  const logout = useLogout();
+
   return (
     <nav className="w-full bg-customdark text-white flex justify-between py-3 items-center border-b-primary border-b-2 px-2 sm:px-4 lg:px-6">
       <Link to="/" className="flex items-center">
@@ -17,11 +23,20 @@ export default function Navbar() {
             Main
           </Link>
         </li>
-        <li>
-          <Link to="/signin" className="[&.active]:font-bold">
-            Signin
-          </Link>
-        </li>
+        {!user && (
+          <li>
+            <Link to="/auth" className="[&.active]:font-bold">
+              Signin
+            </Link>
+          </li>
+        )}
+        {user && (
+          <li>
+            <button type="button" onClick={logout} className="cursor-pointer">
+              Logout
+            </button>
+          </li>
+        )}
         <li>
           <Link to="/about" className="[&.active]:font-bold">
             About
