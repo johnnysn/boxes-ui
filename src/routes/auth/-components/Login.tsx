@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLogin } from "../../../lib/hooks/useLogin";
+import { Link } from "@tanstack/react-router";
 
 export default function Login() {
   const { mutate: login, isPending, isError } = useLogin();
@@ -29,7 +30,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isPending}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary transition-colors disabled:bg-gray-50"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sec focus:border-sec transition-colors disabled:bg-gray-50"
             required
           />
         </div>
@@ -44,7 +45,7 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isPending}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary transition-colors disabled:bg-gray-50"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sec focus:border-sec transition-colors disabled:bg-gray-50"
             required
           />
         </div>
@@ -52,10 +53,18 @@ export default function Login() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full mt-2 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+          className="w-full mt-2 bg-sec text-white py-2 px-4 rounded-md hover:bg-sec-li focus:outline-none focus:ring-2 focus:ring-sec focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
         >
           {isPending ? "Submitting..." : "Submit"}
         </button>
+
+        <Link
+          to="/signup"
+          disabled={isPending}
+          className="w-full mt-2 bg-tertiary text-black py-2 px-4 rounded-md hover:bg-tertiary-li focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors text-center"
+        >
+          Create Account
+        </Link>
 
         {isError && (
           <span className="text-red-600">Coult not authenticate!</span>

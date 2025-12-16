@@ -2,7 +2,10 @@
 
 @theme {
   --color-customdark: #454545;
-  --color-customlight: #FFE6C7;
-  --color-primary: #FF6000;
-  --color-secondary: #FFA559;
+  --color-customlight: #ffe6c7;
+  --color-primary: #ff6000;
+  --color-sec: #6000ff;
+  --color-sec-li: #8033ff;
+  --color-sec-dk: #5000ff;
+  --color-tertiary: #00ff60;
 }
