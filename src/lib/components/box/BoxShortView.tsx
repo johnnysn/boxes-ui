@@ -1,3 +1,4 @@
+import { twMerge } from "tailwind-merge";
 import type { BoxShort } from "../../schemas/box";
 
 export type BoxViewProps = {
@@ -5,9 +6,19 @@ export type BoxViewProps = {
 };
 
 export default function BoxShortView({ box }: BoxViewProps) {
+  const headerColor = `bg-${box.color.toLowerCase()}-700`;
+  const bodyColor = `bg-${box.color.toLowerCase()}-400`;
+
   return (
-    <div className="flex flex-col rounded min-h-20 max-h-80 bg-gray-500 w-full max-w-56">
-      <div className="bg-gray-900 text-white rounded-t-md px-2">{box.name}</div>
+    <div
+      className={twMerge(
+        "flex flex-col rounded min-h-20 max-h-80 w-full max-w-56",
+        bodyColor
+      )}
+    >
+      <div className={twMerge("text-white rounded-t-md px-2", headerColor)}>
+        {box.name}
+      </div>
 
       <div className="flex-1 px-2 py-1">Items</div>
 

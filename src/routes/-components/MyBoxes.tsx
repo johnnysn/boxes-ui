@@ -9,7 +9,7 @@ import boxPlus from "../../assets/box-plus.svg";
 import BoxEdit from "./BoxEdit";
 
 export default function MyBoxes() {
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["boxes"],
     queryFn: ({ queryKey }) =>
       api.get<PagedResponse<BoxShort>>("/boxes").then((d) => d.data),
@@ -23,6 +23,7 @@ export default function MyBoxes() {
       color: string;
     }) => {
       const { data } = await api.post("/boxes", body);
+      refetch();
 
       return data;
     },
