@@ -84,6 +84,7 @@ export default function BoxShortView({
                     ref={inputRef}
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
+                    className="bg-transparent border-none outline-none text-sm"
                   />
                 </form>
               </ItemView>

@@ -9,7 +9,7 @@ export default function ItemView({
   onRemove: () => void;
 }) {
   return (
-    <div className="rounded px-1 py-0.5 bg-gray-800 text-white text-sm flex items-center justify-between">
+    <div className="rounded px-1 py-0.5 bg-gray-800 text-white text-sm flex items-center justify-between gap-1.5">
       <div>{children}</div>
       <button className="cursor-pointer" aria-label="Remove" onClick={onRemove}>
         <X className="size-4" />
