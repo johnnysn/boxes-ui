@@ -2,21 +2,36 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Navbar from "../lib/components/Navbar";
 import Wrapper from "../lib/components/Wrapper";
-import { useState } from "react";
-import { UserContext, type UserData } from "../context";
+import { useEffect, useState } from "react";
+import { UserContext } from "../context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { loadUser } from "../lib/services/user-services";
+import type { UserInfo } from "../lib/schemas/user";
 
 const queryClient = new QueryClient();
 
 const RootLayout = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    if (userInfo === null) {
+      async function retrieveUserInfo() {
+        const info = await loadUser();
+
+        if (info) setUserInfo(info);
+      }
+
+      console.log("Retrieving user info");
+      retrieveUserInfo();
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <UserContext
         value={{
-          user: userData,
-          setUser: setUserData,
+          user: userInfo,
+          setUser: setUserInfo,
         }}
       >
         <header>

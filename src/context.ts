@@ -1,13 +1,9 @@
 import { createContext } from "react";
-
-export interface UserData {
-  name: string;
-  email: string;
-}
+import type { UserInfo } from "./lib/schemas/user";
 
 export interface UserContextData {
-  user: UserData | null;
-  setUser: (data: UserData | null) => void;
+  user: UserInfo | null;
+  setUser: (data: UserInfo | null) => void;
 }
 
 export const UserContext = createContext<UserContextData>({
