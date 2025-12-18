@@ -3,3 +3,7 @@ export interface Item {
   name: string;
   description: string | null;
 }
+
+export interface ItemCreateData {
+  name: string;
+}

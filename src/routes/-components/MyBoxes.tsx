@@ -7,9 +7,15 @@ import { useState } from "react";
 import Modal from "../../lib/components/ui/Modal";
 import boxPlus from "../../assets/box-plus.svg";
 import BoxEdit from "./BoxEdit";
+import type { ItemCreateData } from "../../lib/schemas/item";
 
 export default function MyBoxes() {
-  const { data, isPending, isError, refetch } = useQuery({
+  const {
+    data,
+    isPending: isPendingFetch,
+    isError: isErrorFetch,
+    refetch,
+  } = useQuery({
     queryKey: ["boxes"],
     queryFn: ({ queryKey }) =>
       api.get<PagedResponse<BoxShort>>("/boxes").then((d) => d.data),
@@ -29,6 +35,39 @@ export default function MyBoxes() {
     },
     onError: (error) => {}, // TODO handle error
   });
+
+  const { mutate: deleteBox, isPending: isPendingDelete } = useMutation({
+    mutationFn: async (boxId: number) => {
+      await api.delete(`/boxes/${boxId}`);
+      refetch();
+    },
+    onError: (error) => {}, // TODO handle error
+  });
+
+  const { mutate: deleteItem, isPending: isPendingDeleteItem } = useMutation({
+    mutationFn: async (id: number) => {
+      await api.delete(`/items/${id}`);
+      refetch();
+    },
+    onError: (error) => {}, // TODO handle error
+  });
+
+  const { mutate: addItem, isPending: isPendingAddItem } = useMutation({
+    mutationFn: async ({
+      boxId,
+      body,
+    }: {
+      boxId: number;
+      body: ItemCreateData;
+    }) => {
+      await api.post(`/boxes/${boxId}/items`, body);
+      refetch();
+    },
+    onError: (error) => {}, // TODO handle error
+  });
+
+  // const isPending = isPendingFetch || isPendingCreate || isPendingDelete || isPendingAddItem || isPendingDeleteItem;
+  // const isError = isErrorFetch;
 
   const [isAdding, setIsAdding] = useState(false);
 
@@ -59,10 +98,15 @@ export default function MyBoxes() {
         <span className="text-lg">Add Box</span>
       </button>
 
-      {isPending ? (
+      {isPendingFetch ? (
         <span>Loading...</span>
-      ) : data && !isError ? (
-        <BoxesGrid boxes={data.content} />
+      ) : data && !isErrorFetch ? (
+        <BoxesGrid
+          boxes={data.content}
+          onDelete={deleteBox}
+          onAddedItem={(boxId, item) => addItem({ boxId, body: item })}
+          onDeleteItem={deleteItem}
+        />
       ) : (
         <></>
       )}
