@@ -4,6 +4,7 @@ import { Trash2, PlusSquare } from "lucide-react";
 import type { ItemCreateData } from "../../schemas/item";
 import React, { useEffect, useRef, useState } from "react";
 import ItemView from "./ItemView";
+import GhostInput from "../ui/GhostInput";
 
 export type BoxViewProps = {
   box: BoxShort;
@@ -28,6 +29,7 @@ export default function BoxShortView({
   useEffect(() => {
     setTimeout(() => {
       if (isAddingItem && inputRef) {
+        setNewItemName("");
         inputRef.current?.focus();
       }
     }, 200);
@@ -79,12 +81,18 @@ export default function BoxShortView({
             <li>
               <ItemView onRemove={() => setIsAddingItem(false)}>
                 <form onSubmit={newItemSubmit}>
-                  <input
+                  {/* <input
                     type="text"
                     ref={inputRef}
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
                     className="bg-transparent border-none outline-none text-sm"
+                  /> */}
+                  <GhostInput
+                    name="name"
+                    onValueChange={(v) => setNewItemName(v)}
+                    ref={inputRef}
+                    value={newItemName}
                   />
                 </form>
               </ItemView>

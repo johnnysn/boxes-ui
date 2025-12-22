@@ -36,8 +36,9 @@ api.interceptors.response.use(
   (error) => {
     // Se receber 401 (Não autorizado), limpa o storage e redireciona
     if (error.response?.status === 401) {
+      console.log("User is not logged in... redirecting");
       localStorage.removeItem(STORAGE_KEY);
-      window.location.href = "/login"; // Ou use um gerenciador de estado para forçar o logout
+      window.location.href = "/auth";
     }
     return Promise.reject(error);
   }
