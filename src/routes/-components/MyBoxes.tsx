@@ -11,7 +11,7 @@ import type { ItemCreateData } from "../../lib/schemas/item";
 import SearchBox from "../../lib/components/box/SearchBox";
 
 export default function MyBoxes() {
-  const [searchKey, setSearchKey] = useState("");
+  const [searchKey, setSearchKey] = useState({ name: "", description: "" });
 
   const {
     data,
@@ -19,12 +19,12 @@ export default function MyBoxes() {
     isError: isErrorFetch,
     refetch,
   } = useQuery({
-    queryKey: ["boxes", searchKey],
+    queryKey: ["boxes", searchKey.name, searchKey.description],
     queryFn: ({ queryKey }) =>
       api
         .get<
           PagedResponse<BoxShort>
-        >("/boxes", { params: { name: queryKey[1] } })
+        >("/boxes", { params: { name: queryKey[1], description: queryKey[2], or: true } })
         .then((d) => d.data),
   });
 
@@ -73,7 +73,12 @@ export default function MyBoxes() {
     onError: (error) => {}, // TODO handle error
   });
 
-  // const isPending = isPendingFetch || isPendingCreate || isPendingDelete || isPendingAddItem || isPendingDeleteItem;
+  const isPending =
+    isPendingFetch ||
+    isPendingCreate ||
+    isPendingDelete ||
+    isPendingAddItem ||
+    isPendingDeleteItem;
   // const isError = isErrorFetch;
 
   const [isAdding, setIsAdding] = useState(false);
@@ -94,7 +99,14 @@ export default function MyBoxes() {
         </Modal>
       )}
 
-      <SearchBox searchHandler={(key) => setSearchKey(key)} />
+      <SearchBox
+        searchHandler={(key, enableName, enableDescription) =>
+          setSearchKey({
+            name: enableName ? key : "",
+            description: enableDescription ? key : "",
+          })
+        }
+      />
 
       {isPendingFetch ? (
         <span>Loading...</span>
@@ -110,6 +122,7 @@ export default function MyBoxes() {
             type="button"
             className="mt-4 bg-orange-400 hover:bg-orange-300 border-b-2 border-b-primary text-customdark rounded font-bold py-2 w-[200px] flex items-center justify-center gap-2 transition-colors duration-300"
             onClick={() => setIsAdding(true)}
+            disabled={isPending}
           >
             <img src={boxPlus} className="w-10" />
             <span className="text-lg">Add Box</span>

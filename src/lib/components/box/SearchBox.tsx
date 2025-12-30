@@ -2,14 +2,22 @@ import { type ChangeEvent, useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import search from "../../../assets/search.svg";
 
-type Props = { searchHandler: (key: string) => void };
+type Props = {
+  searchHandler: (
+    key: string,
+    enableName: boolean,
+    enableDescription: boolean
+  ) => void;
+};
 
 export default function SearchBox({ searchHandler }: Props) {
   const [key, setKey] = useState("");
+  const [enableName, setEnableName] = useState(true);
+  const [enableDescription, setEnableDescription] = useState(true);
   const debouncedKey = useDebounce(key, 200);
 
   useEffect(() => {
-    searchHandler(debouncedKey);
+    searchHandler(debouncedKey, enableName, enableDescription);
   }, [debouncedKey, searchHandler]);
 
   const changeHandler = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -17,20 +25,43 @@ export default function SearchBox({ searchHandler }: Props) {
   }, []);
 
   return (
-    <div className="flex items-center w-full md:w-[450px] border-2 border-x-transparent border-t-transparent border-b-primary bg-orange-100 rounded py-2 px-3 hover:bg-orange-50 focus-within:bg-orange-50 transition-colors duration-300 mb-4">
-      <input
-        className="appearance-none bg-transparent border-none w-full text-gray-700 font-medium font-sans mr-3 py-1 px-2 leading-tight focus:outline-none"
-        type="text"
-        placeholder="Search box"
-        aria-label="Search box"
-        onChange={changeHandler}
-      />
-      <button
-        className="shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded"
-        type="button"
-      >
-        <img src={search} className="w-6" alt="Search" />
-      </button>
+    <div className="flex flex-col gap-1.5 mb-4">
+      <div className="flex items-center w-full md:w-[450px] border-2 border-x-transparent border-t-transparent border-b-primary bg-orange-100 rounded py-2 px-3 hover:bg-orange-50 focus-within:bg-orange-50 transition-colors duration-300">
+        <input
+          className="appearance-none bg-transparent border-none w-full text-gray-700 font-medium font-sans mr-3 py-1 px-2 leading-tight focus:outline-none"
+          type="text"
+          placeholder="Search box"
+          aria-label="Search box"
+          onChange={changeHandler}
+        />
+        <button
+          className="shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded"
+          type="button"
+        >
+          <img src={search} className="w-6" alt="Search" />
+        </button>
+      </div>
+      <div className="flex items-center gap-4 justify-end">
+        <label className="text-sm flex items-center gap-1 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={enableName}
+            className="accent-sec w-3 h-3 cursor-pointer"
+            onChange={(e) => setEnableName(e.target.checked)}
+          />
+          <span>Name</span>
+        </label>
+
+        <label className="text-sm flex items-center gap-1 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={enableDescription}
+            className="accent-sec w-3 h-3 cursor-pointer"
+            onChange={(e) => setEnableDescription(e.target.checked)}
+          />
+          <span>Description</span>
+        </label>
+      </div>
     </div>
   );
 }
