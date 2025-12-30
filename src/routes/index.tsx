@@ -11,10 +11,6 @@ function Index() {
   const { user } = useContext(UserContext);
 
   return (
-    <div className="p-2">
-      <h3>Welcome Home{user && ", " + user.name}!</h3>
-
-      {user && <MyBoxes />}
-    </div>
+    <div className="p-2">{user ? <MyBoxes /> : <p>Please, login!</p>}</div>
   );
 }

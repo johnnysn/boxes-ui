@@ -8,17 +8,24 @@ import Modal from "../../lib/components/ui/Modal";
 import boxPlus from "../../assets/box-plus.svg";
 import BoxEdit from "./BoxEdit";
 import type { ItemCreateData } from "../../lib/schemas/item";
+import SearchBox from "../../lib/components/box/SearchBox";
 
 export default function MyBoxes() {
+  const [searchKey, setSearchKey] = useState("");
+
   const {
     data,
     isPending: isPendingFetch,
     isError: isErrorFetch,
     refetch,
   } = useQuery({
-    queryKey: ["boxes"],
+    queryKey: ["boxes", searchKey],
     queryFn: ({ queryKey }) =>
-      api.get<PagedResponse<BoxShort>>("/boxes").then((d) => d.data),
+      api
+        .get<
+          PagedResponse<BoxShort>
+        >("/boxes", { params: { name: queryKey[1] } })
+        .then((d) => d.data),
   });
 
   const { mutate: create, isPending: isPendingCreate } = useMutation({
@@ -73,8 +80,6 @@ export default function MyBoxes() {
 
   return (
     <div className="flex flex-col gap-3 items-center">
-      <h1 className="text-2xl font-bold mb-3">My boxes</h1>
-
       {isAdding && (
         <Modal onCancel={() => setIsAdding(false)}>
           <BoxEdit
@@ -89,24 +94,27 @@ export default function MyBoxes() {
         </Modal>
       )}
 
-      <button
-        type="button"
-        className="bg-orange-400 hover:bg-orange-300 border-b-2 border-b-primary text-customdark rounded font-bold py-2 w-[200px] flex items-center justify-center gap-2 transition-colors duration-300"
-        onClick={() => setIsAdding(true)}
-      >
-        <img src={boxPlus} className="w-10" />
-        <span className="text-lg">Add Box</span>
-      </button>
+      <SearchBox searchHandler={(key) => setSearchKey(key)} />
 
       {isPendingFetch ? (
         <span>Loading...</span>
       ) : data && !isErrorFetch ? (
-        <BoxesGrid
-          boxes={data.content}
-          onDelete={deleteBox}
-          onAddedItem={(boxId, item) => addItem({ boxId, body: item })}
-          onDeleteItem={deleteItem}
-        />
+        <>
+          <BoxesGrid
+            boxes={data.content}
+            onDelete={deleteBox}
+            onAddedItem={(boxId, item) => addItem({ boxId, body: item })}
+            onDeleteItem={deleteItem}
+          />
+          <button
+            type="button"
+            className="mt-4 bg-orange-400 hover:bg-orange-300 border-b-2 border-b-primary text-customdark rounded font-bold py-2 w-[200px] flex items-center justify-center gap-2 transition-colors duration-300"
+            onClick={() => setIsAdding(true)}
+          >
+            <img src={boxPlus} className="w-10" />
+            <span className="text-lg">Add Box</span>
+          </button>
+        </>
       ) : (
         <></>
       )}

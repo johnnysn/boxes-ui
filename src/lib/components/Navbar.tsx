@@ -17,32 +17,39 @@ export default function Navbar() {
         </p>
       </Link>
 
-      <ul className="flex gap-3 justify-between items-center">
-        <li>
-          <Link to="/" className="[&.active]:font-bold">
-            Main
-          </Link>
-        </li>
-        {!user && (
+      <div className="flex flex-col">
+        <ul className="flex gap-3 justify-between items-center">
           <li>
-            <Link to="/auth" className="[&.active]:font-bold">
-              Signin
+            <Link to="/" className="[&.active]:font-bold">
+              Main
             </Link>
           </li>
-        )}
-        {user && (
+          {!user && (
+            <li>
+              <Link to="/auth" className="[&.active]:font-bold">
+                Signin
+              </Link>
+            </li>
+          )}
+          {user && (
+            <li>
+              <button type="button" onClick={logout} className="cursor-pointer">
+                Logout
+              </button>
+            </li>
+          )}
           <li>
-            <button type="button" onClick={logout} className="cursor-pointer">
-              Logout
-            </button>
+            <Link to="/about" className="[&.active]:font-bold">
+              About
+            </Link>
           </li>
+        </ul>
+        {user && (
+          <div className="text-xs text-gray-300 text-center">
+            Hey there, {user.name}!
+          </div>
         )}
-        <li>
-          <Link to="/about" className="[&.active]:font-bold">
-            About
-          </Link>
-        </li>
-      </ul>
+      </div>
     </nav>
   );
 }
