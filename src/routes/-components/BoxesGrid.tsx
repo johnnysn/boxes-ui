@@ -14,7 +14,7 @@ export default function BoxesGrid({
   onDeleteItem: (id: number) => void;
 }) {
   return (
-    <ul className="flex flex-wrap gap-3 w-full max-h-10/12 overflow-y-scroll">
+    <ul className="flex flex-wrap gap-3 w-full max-h-[55dvh] overflow-y-auto">
       {boxes.map((b) => (
         <li key={b.id} className="max-w-sm">
           <BoxShortView

@@ -53,7 +53,6 @@ export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sec focus:border-sec transition-colors disabled:bg-gray-50"
-            required
           ></textarea>
         </div>
 

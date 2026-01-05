@@ -24,7 +24,7 @@ export default function MyBoxes() {
       api
         .get<
           PagedResponse<BoxShort>
-        >("/boxes", { params: { name: queryKey[1], description: queryKey[2], or: true } })
+        >("/boxes", { params: { name: queryKey[1], description: queryKey[2], or: true, size: 200 } })
         .then((d) => d.data),
   });
 

@@ -46,7 +46,7 @@ export default function BoxShortView({
   return (
     <div
       className={twMerge(
-        "flex flex-col rounded min-h-20 max-h-80 min-w-40",
+        "flex flex-col rounded min-h-20 max-h-80 min-w-36",
         bodyColor
       )}
     >
@@ -108,7 +108,7 @@ export default function BoxShortView({
         </ul>
       </div>
 
-      <div className="h-6 text-xs py-1 px-2">Footer</div>
+      <div className="h-6 text-xs py-1 px-2"></div>
     </div>
   );
 }
