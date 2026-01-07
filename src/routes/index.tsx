@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useContext } from "react";
-import { UserContext } from "../context";
+import { UserContext } from "../lib/providers/user-context";
 import MyBoxes from "./-components/MyBoxes";
 
 export const Route = createFileRoute("/")({

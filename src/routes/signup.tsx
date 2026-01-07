@@ -1,30 +1,18 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type React from "react";
-import { api } from "../lib/axios";
+import { signup, type SignupData } from "../lib/services/user-services";
 
 export const Route = createFileRoute("/signup")({
   component: Signup,
 });
-
-interface SignupData {
-  email: string;
-  name: string;
-  password: string;
-  invitationCode: string;
-}
-
-interface SignupResponse {
-  email: string;
-}
 
 function Signup() {
   const navigate = useNavigate();
   const { isPending, isError, mutate } = useMutation({
     mutationKey: ["signup"],
     mutationFn: async (body: SignupData) => {
-      const { data } = await api.post<SignupResponse>("/auth/signup", body);
-      return data;
+      return await signup(body);
     },
     onSuccess: (data) => {
       console.log(data.email + " is now with us!");

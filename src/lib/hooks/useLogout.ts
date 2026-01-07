@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { UserContext } from "../../context";
+import { UserContext } from "../providers/user-context";
 import { useNavigate } from "@tanstack/react-router";
 
 export default function useLogout() {

@@ -1,6 +1,12 @@
 import axios from "axios";
 
-export const STORAGE_KEY = "@app:token";
+// Local variable to store the current jwt
+let _memoryToken: string | null = null;
+
+// Setter function to be used by react
+export const setApiToken = (token: string | null) => {
+  _memoryToken = token;
+};
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -9,35 +15,27 @@ export const api = axios.create({
   },
 });
 
-// Interceptor de request: Anexa o token atual
+// Request interceptor: Injects JWT
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(STORAGE_KEY);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (_memoryToken) {
+      config.headers.Authorization = `Bearer ${_memoryToken}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Interceptor de response: Rotaciona o token e trata erros
+// Response interceptor
 api.interceptors.response.use(
-  (response) => {
-    const newToken = response.headers["Authorization"];
-
-    if (newToken) {
-      const cleanToken = newToken.replace("Bearer ", "");
-      localStorage.setItem(STORAGE_KEY, cleanToken);
-    }
-
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Se receber 401 (Não autorizado), limpa o storage e redireciona
+    // If gets 401 (unauthorized), redirects to the login page
     if (error.response?.status === 401) {
-      console.log("User is not logged in... redirecting");
-      localStorage.removeItem(STORAGE_KEY);
+      console.warn("User is not logged in... redirecting");
+      // Clears local token
+      _memoryToken = null;
+
       window.location.href = "/auth";
     }
     return Promise.reject(error);

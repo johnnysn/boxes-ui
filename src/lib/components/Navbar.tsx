@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import logo from "../../assets/logo-prim.svg";
 import { Link } from "@tanstack/react-router";
-import { UserContext } from "../../context";
+import { UserContext } from "../providers/user-context";
 import useLogout from "../hooks/useLogout";
 
 export default function Navbar() {
