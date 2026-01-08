@@ -1,76 +1,70 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/axios";
-import type { PagedResponse } from "../../lib/schemas/page";
-import type { BoxShort } from "../../lib/schemas/box";
+import type { BoxCreateData } from "../../lib/schemas/box";
 import BoxesGrid from "./BoxesGrid";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Modal from "../../lib/components/ui/Modal";
 import boxPlus from "../../assets/box-plus.svg";
 import BoxEdit from "./BoxEdit";
 import type { ItemCreateData } from "../../lib/schemas/item";
 import SearchBox from "../../lib/components/box/SearchBox";
+import { UserContext } from "../../lib/providers/user-context";
+import { addItem } from "../../lib/services/item-services";
+import { searchBoxes } from "../../lib/services/box-services";
 
 export default function MyBoxes() {
   const [searchKey, setSearchKey] = useState({ name: "", description: "" });
+  const queryClient = useQueryClient();
+  const { user } = useContext(UserContext);
 
   const {
     data,
     isPending: isPendingFetch,
     isError: isErrorFetch,
-    refetch,
   } = useQuery({
     queryKey: ["boxes", searchKey.name, searchKey.description],
     queryFn: ({ queryKey }) =>
-      api
-        .get<
-          PagedResponse<BoxShort>
-        >("/boxes", { params: { name: queryKey[1], description: queryKey[2], or: true, size: 200 } })
-        .then((d) => d.data),
+      searchBoxes(queryKey[1], queryKey[2], user!.dataKey),
   });
 
-  const { mutate: create, isPending: isPendingCreate } = useMutation({
-    mutationKey: ["boxCreate"],
-    mutationFn: async (body: {
-      name: string;
-      description: string;
-      color: string;
-    }) => {
-      const { data } = await api.post("/boxes", body);
-      refetch();
+  const handleError = (error: Error) => {
+    // TODO handle error
+    console.error(error);
+  };
 
-      return data;
+  const handleSuccess = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["boxes"] });
+  };
+
+  const { mutate: createBox, isPending: isPendingCreate } = useMutation({
+    mutationKey: ["boxCreate"],
+    mutationFn: async (body: BoxCreateData) => {
+      await api.post("/boxes", body);
     },
-    onError: (error) => {}, // TODO handle error
+    onSuccess: handleSuccess,
+    onError: handleError,
   });
 
   const { mutate: deleteBox, isPending: isPendingDelete } = useMutation({
     mutationFn: async (boxId: number) => {
       await api.delete(`/boxes/${boxId}`);
-      refetch();
     },
-    onError: (error) => {}, // TODO handle error
+    onSuccess: handleSuccess,
+    onError: handleError,
   });
 
   const { mutate: deleteItem, isPending: isPendingDeleteItem } = useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/items/${id}`);
-      refetch();
     },
-    onError: (error) => {}, // TODO handle error
+    onSuccess: handleSuccess,
+    onError: handleError,
   });
 
-  const { mutate: addItem, isPending: isPendingAddItem } = useMutation({
-    mutationFn: async ({
-      boxId,
-      body,
-    }: {
-      boxId: number;
-      body: ItemCreateData;
-    }) => {
-      await api.post(`/boxes/${boxId}/items`, body);
-      refetch();
-    },
-    onError: (error) => {}, // TODO handle error
+  const { mutate: doAddItem, isPending: isPendingAddItem } = useMutation({
+    mutationFn: async (body: ItemCreateData) => addItem(body, user!.dataKey),
+    onSuccess: handleSuccess,
+    onError: handleError,
   });
 
   const isPending =
@@ -90,7 +84,7 @@ export default function MyBoxes() {
           <BoxEdit
             onClose={() => setIsAdding(false)}
             onSubmitHandler={(name, description, color) => {
-              create({ name, description, color });
+              createBox({ name, description, color });
 
               setIsAdding(false);
             }}
@@ -115,7 +109,7 @@ export default function MyBoxes() {
           <BoxesGrid
             boxes={data.content}
             onDelete={deleteBox}
-            onAddedItem={(boxId, item) => addItem({ boxId, body: item })}
+            onAddedItem={(boxId, item) => doAddItem({ ...item, boxId })}
             onDeleteItem={deleteItem}
           />
           <button

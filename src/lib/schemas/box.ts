@@ -7,3 +7,9 @@ export interface BoxShort {
   color: string;
   items: Item[];
 }
+
+export interface BoxCreateData {
+  name: string;
+  description: string;
+  color: string;
+}
