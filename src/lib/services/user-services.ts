@@ -1,4 +1,4 @@
-import { api } from "../axios";
+import { api } from "../api-client";
 import { bufferToBase64, deriveKeys } from "../utils/crypto";
 
 export interface SignupData {

@@ -1,8 +1,8 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import { setApiToken } from "../axios";
 import { UserContext } from "./user-context";
 import type { UserInfo } from "../schemas/user";
+import { apiClient } from "../api-client";
 
 export default function UserProvider({
   children,
@@ -13,9 +13,9 @@ export default function UserProvider({
 
   useEffect(() => {
     if (userInfo?.jwt) {
-      setApiToken(userInfo.jwt);
+      apiClient.memoryToken = userInfo.jwt;
     } else {
-      setApiToken(null);
+      apiClient.memoryToken = null;
     }
   }, [userInfo]);
 

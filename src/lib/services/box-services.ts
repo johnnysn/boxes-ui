@@ -1,16 +1,16 @@
-import { api } from "../axios";
+import { api } from "../api-client";
 import type { BoxShort } from "../schemas/box";
 import type { PagedResponse } from "../schemas/page";
 import { decryptItem } from "./item-services";
 
 export async function searchBoxes(
-  name: string,
+  label: string,
   description: string,
   dataKey: CryptoKey
 ) {
   return api
     .get<PagedResponse<BoxShort>>("/boxes", {
-      params: { name: name, description: description, or: true, size: 200 },
+      params: { label, description, or: true, size: 200 },
     })
     .then((d) => d.data)
     .then((data) => {

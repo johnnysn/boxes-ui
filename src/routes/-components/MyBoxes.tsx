@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../lib/axios";
+import { api } from "../../lib/api-client";
 import type { BoxCreateData } from "../../lib/schemas/box";
 import BoxesGrid from "./BoxesGrid";
 import { useContext, useState } from "react";
@@ -11,26 +11,23 @@ import SearchBox from "../../lib/components/box/SearchBox";
 import { UserContext } from "../../lib/providers/user-context";
 import { addItem } from "../../lib/services/item-services";
 import { searchBoxes } from "../../lib/services/box-services";
+import { useToast } from "../../lib/providers/toast-context";
 
 export default function MyBoxes() {
-  const [searchKey, setSearchKey] = useState({ name: "", description: "" });
+  const [searchKey, setSearchKey] = useState({ label: "", description: "" });
   const queryClient = useQueryClient();
   const { user } = useContext(UserContext);
+  const { showToast } = useToast();
 
   const {
     data,
     isPending: isPendingFetch,
     isError: isErrorFetch,
   } = useQuery({
-    queryKey: ["boxes", searchKey.name, searchKey.description],
+    queryKey: ["boxes", searchKey.label, searchKey.description],
     queryFn: ({ queryKey }) =>
       searchBoxes(queryKey[1], queryKey[2], user!.dataKey),
   });
-
-  const handleError = (error: Error) => {
-    // TODO handle error
-    console.error(error);
-  };
 
   const handleSuccess = async () => {
     await queryClient.invalidateQueries({ queryKey: ["boxes"] });
@@ -41,8 +38,10 @@ export default function MyBoxes() {
     mutationFn: async (body: BoxCreateData) => {
       await api.post("/boxes", body);
     },
-    onSuccess: handleSuccess,
-    onError: handleError,
+    onSuccess: () => {
+      handleSuccess();
+      showToast("Box created!!", "success");
+    },
   });
 
   const { mutate: deleteBox, isPending: isPendingDelete } = useMutation({
@@ -50,7 +49,6 @@ export default function MyBoxes() {
       await api.delete(`/boxes/${boxId}`);
     },
     onSuccess: handleSuccess,
-    onError: handleError,
   });
 
   const { mutate: deleteItem, isPending: isPendingDeleteItem } = useMutation({
@@ -58,13 +56,11 @@ export default function MyBoxes() {
       await api.delete(`/items/${id}`);
     },
     onSuccess: handleSuccess,
-    onError: handleError,
   });
 
   const { mutate: doAddItem, isPending: isPendingAddItem } = useMutation({
     mutationFn: async (body: ItemCreateData) => addItem(body, user!.dataKey),
     onSuccess: handleSuccess,
-    onError: handleError,
   });
 
   const isPending =
@@ -96,7 +92,7 @@ export default function MyBoxes() {
       <SearchBox
         searchHandler={(key, enableName, enableDescription) =>
           setSearchKey({
-            name: enableName ? key : "",
+            label: enableName ? key : "",
             description: enableDescription ? key : "",
           })
         }

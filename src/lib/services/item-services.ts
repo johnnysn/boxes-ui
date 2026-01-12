@@ -1,4 +1,4 @@
-import { api } from "../axios";
+import { api } from "../api-client";
 import type { Item, ItemCreateData } from "../schemas/item";
 import { decryptText, encryptText } from "../utils/crypto";
 
