@@ -56,7 +56,7 @@ export default function BoxShortView({
           headerColor
         )}
       >
-        <span>{box.name}</span>
+        <span>{box.label}</span>
         <div className="flex items-center gap-1">
           <button
             className="cursor-pointer"

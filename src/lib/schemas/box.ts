@@ -2,14 +2,14 @@ import type { Item } from "./item";
 
 export interface BoxShort {
   id: number;
-  name: string;
+  label: string;
   description: string;
   color: string;
   items: Item[];
 }
 
 export interface BoxCreateData {
-  name: string;
+  label: string;
   description: string;
   color: string;
 }

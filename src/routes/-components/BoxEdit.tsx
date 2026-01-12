@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
-  const [name, setName] = useState(boxData ? boxData.name : "");
+  const [label, setLabel] = useState(boxData ? boxData.label : "");
   const [description, setDescription] = useState(
     boxData ? boxData.description : ""
   );
@@ -20,7 +20,7 @@ export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
 
-    onSubmitHandler(name, description, color.trim().toUpperCase());
+    onSubmitHandler(label, description, color.trim().toUpperCase());
   }
 
   return (
@@ -31,14 +31,14 @@ export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
 
       <form onSubmit={submitHandler}>
         <div className="flex flex-col">
-          <label htmlFor="inputName">Name</label>
+          <label htmlFor="inputName">Label</label>
           <input
             type="text"
-            name="name"
+            name="label"
             id="inputName"
             placeholder="A label for the box"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sec focus:border-sec transition-colors disabled:bg-gray-50"
             required
           />

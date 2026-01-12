@@ -84,7 +84,7 @@ export default function MyBoxes() {
           <BoxEdit
             onClose={() => setIsAdding(false)}
             onSubmitHandler={(name, description, color) => {
-              createBox({ name, description, color });
+              createBox({ label: name, description, color });
 
               setIsAdding(false);
             }}
