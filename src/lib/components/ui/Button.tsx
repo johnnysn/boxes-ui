@@ -2,7 +2,7 @@ import type { HTMLAttributes } from "react";
 
 type Props = {
   text: string;
-  color?: "primary" | "secondary";
+  color?: "primary" | "sec";
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
 };

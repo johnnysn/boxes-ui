@@ -12,12 +12,14 @@ import { UserContext } from "../../lib/providers/user-context";
 import { addItem } from "../../lib/services/item-services";
 import { searchBoxes } from "../../lib/services/box-services";
 import { useToast } from "../../lib/providers/toast-context";
+import ConfirmModal from "../../lib/components/ui/ConfirmModal";
 
 export default function MyBoxes() {
   const [searchKey, setSearchKey] = useState({ label: "", description: "" });
   const queryClient = useQueryClient();
   const { user } = useContext(UserContext);
   const { showToast } = useToast();
+  const [deletingBoxId, setDeletingBoxId] = useState(0);
 
   const {
     data,
@@ -89,6 +91,17 @@ export default function MyBoxes() {
         </Modal>
       )}
 
+      {deletingBoxId > 0 && (
+        <ConfirmModal
+          message="Would you really like to delete this wonderful box??"
+          onConfirm={() => {
+            deleteBox(deletingBoxId);
+            setDeletingBoxId(0);
+          }}
+          onCancel={() => setDeletingBoxId(0)}
+        />
+      )}
+
       <SearchBox
         searchHandler={(key, enableName, enableDescription) =>
           setSearchKey({
@@ -104,7 +117,7 @@ export default function MyBoxes() {
         <>
           <BoxesGrid
             boxes={data.content}
-            onDelete={deleteBox}
+            onDelete={setDeletingBoxId}
             onAddedItem={(boxId, item) => doAddItem({ ...item, boxId })}
             onDeleteItem={deleteItem}
           />
