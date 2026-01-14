@@ -15,7 +15,9 @@ export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
   const [description, setDescription] = useState(
     boxData ? boxData.description : ""
   );
-  const [color, setColor] = useState(boxData ? boxData.color : "red");
+  const [color, setColor] = useState(
+    boxData ? boxData.color.toLocaleLowerCase() : "red"
+  );
 
   function submitHandler(e: React.FormEvent) {
     e.preventDefault();
@@ -62,12 +64,7 @@ export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
         />
 
         <div className="flex items-center justify-end gap-2">
-          <Button
-            text="Cancel"
-            color="secondary"
-            type="button"
-            onClick={onClose}
-          />
+          <Button text="Cancel" color="sec" type="button" onClick={onClose} />
           <Button text="Save" color="primary" />
         </div>
       </form>

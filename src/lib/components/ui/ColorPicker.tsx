@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 const selectableColors = [
   "red",
   "emerald",
@@ -13,18 +11,9 @@ const selectableColors = [
 type Props = { onSelectColor: (color: string) => void; selectedColor?: string };
 
 export default function ColorPicker({ onSelectColor, selectedColor }: Props) {
-  const [color, setColor] = useState("red");
-
   const colorClickHandler = (c: string) => {
-    setColor(c);
     onSelectColor(c);
   };
-
-  useEffect(() => {
-    if (selectedColor) {
-      setColor(selectedColor);
-    }
-  }, [selectedColor]);
 
   return (
     <div className="mb-4">
@@ -35,7 +24,7 @@ export default function ColorPicker({ onSelectColor, selectedColor }: Props) {
           <div
             key={c}
             className={`bg-${c}-400 w-7 h-7 rounded-sm hover:bg-${c}-300 ${
-              c === color ? "border-2 border-black" : ""
+              c === selectedColor ? "border-2 border-black" : ""
             }`}
             onClick={() => colorClickHandler(c)}
           ></div>

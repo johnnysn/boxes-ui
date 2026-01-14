@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/api-client";
-import type { BoxCreateData } from "../../lib/schemas/box";
+import type {
+  BoxShort,
+  BoxCreateData,
+  BoxUpdateData,
+} from "../../lib/schemas/box";
 import BoxesGrid from "./BoxesGrid";
 import { useContext, useState } from "react";
 import Modal from "../../lib/components/ui/Modal";
@@ -46,6 +50,17 @@ export default function MyBoxes() {
     },
   });
 
+  const { mutate: updateBox, isPending: isPendingUpdate } = useMutation({
+    mutationKey: ["boxUpdate"],
+    mutationFn: async (body: BoxUpdateData) => {
+      await api.put(`/boxes/${body.id}`, body);
+    },
+    onSuccess: () => {
+      handleSuccess();
+      showToast("Box updated!!", "success");
+    },
+  });
+
   const { mutate: deleteBox, isPending: isPendingDelete } = useMutation({
     mutationFn: async (boxId: number) => {
       await api.delete(`/boxes/${boxId}`);
@@ -68,25 +83,37 @@ export default function MyBoxes() {
   const isPending =
     isPendingFetch ||
     isPendingCreate ||
+    isPendingUpdate ||
     isPendingDelete ||
     isPendingAddItem ||
     isPendingDeleteItem;
   // const isError = isErrorFetch;
 
   const [isAdding, setIsAdding] = useState(false);
+  const [editingBox, setEditingBox] = useState<BoxShort | null>(null);
+
+  const cancelEditing = () => {
+    setIsAdding(false);
+    setEditingBox(null);
+  };
 
   return (
     <div className="flex flex-col gap-3 items-center">
-      {isAdding && (
-        <Modal onCancel={() => setIsAdding(false)}>
+      {(isAdding || !!editingBox) && (
+        <Modal onCancel={cancelEditing}>
           <BoxEdit
-            onClose={() => setIsAdding(false)}
-            onSubmitHandler={(name, description, color) => {
-              createBox({ label: name, description, color });
+            onClose={cancelEditing}
+            onSubmitHandler={(label, description, color) => {
+              if (editingBox) {
+                updateBox({ id: editingBox.id, label, description, color });
+                setEditingBox(null);
+              } else {
+                createBox({ label, description, color });
+              }
 
               setIsAdding(false);
             }}
-            boxData={null}
+            boxData={editingBox}
           />
         </Modal>
       )}
@@ -120,6 +147,10 @@ export default function MyBoxes() {
             onDelete={setDeletingBoxId}
             onAddedItem={(boxId, item) => doAddItem({ ...item, boxId })}
             onDeleteItem={deleteItem}
+            onEdit={(b) => {
+              setEditingBox(b);
+              setIsAdding(true);
+            }}
           />
           <button
             type="button"

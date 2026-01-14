@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import type { BoxShort } from "../../schemas/box";
-import { Trash2, PlusSquare } from "lucide-react";
+import { Trash2, PlusSquare, Edit } from "lucide-react";
 import type { ItemCreateData } from "../../schemas/item";
 import React, { useEffect, useRef, useState } from "react";
 import ItemView from "./ItemView";
@@ -8,6 +8,7 @@ import GhostInput from "../ui/GhostInput";
 
 export type BoxViewProps = {
   box: BoxShort;
+  onEdit: () => void;
   onDelete: () => void;
   onAddedItem: (data: ItemCreateData) => void;
   onDeleteItem: (id: number) => void;
@@ -15,6 +16,7 @@ export type BoxViewProps = {
 
 export default function BoxShortView({
   box,
+  onEdit,
   onDelete,
   onAddedItem,
   onDeleteItem,
@@ -38,7 +40,7 @@ export default function BoxShortView({
   function newItemSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    onAddedItem({ name: newItemName });
+    onAddedItem({ name: newItemName, boxId: 0 });
     setIsAddingItem(false);
     setNewItemName("");
   }
@@ -52,11 +54,11 @@ export default function BoxShortView({
     >
       <div
         className={twMerge(
-          "text-white rounded-t-md px-2 flex justify-between items-center",
+          "text-white rounded-t-md px-2 py-1 flex justify-between items-center gap-1.5",
           headerColor
         )}
       >
-        <span>{box.label}</span>
+        <span className="text-sm font-medium">{box.label}</span>
         <div className="flex items-center gap-1">
           <button
             className="cursor-pointer"
@@ -64,6 +66,13 @@ export default function BoxShortView({
             onClick={() => setIsAddingItem(true)}
           >
             <PlusSquare className="size-4" />
+          </button>
+          <button
+            className="cursor-pointer"
+            aria-label="Edit box"
+            onClick={onEdit}
+          >
+            <Edit className="size-4" />
           </button>
           <button
             className="cursor-pointer"
@@ -81,13 +90,6 @@ export default function BoxShortView({
             <li>
               <ItemView onRemove={() => setIsAddingItem(false)}>
                 <form onSubmit={newItemSubmit}>
-                  {/* <input
-                    type="text"
-                    ref={inputRef}
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    className="bg-transparent border-none outline-none text-sm"
-                  /> */}
                   <GhostInput
                     name="name"
                     onValueChange={(v) => setNewItemName(v)}
@@ -101,7 +103,7 @@ export default function BoxShortView({
           {box.items.map((item) => (
             <li key={item.id}>
               <ItemView onRemove={() => onDeleteItem(item.id)}>
-                {item.name}
+                <span className="text-sm">{item.name}</span>
               </ItemView>
             </li>
           ))}

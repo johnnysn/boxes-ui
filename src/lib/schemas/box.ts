@@ -13,3 +13,10 @@ export interface BoxCreateData {
   description: string;
   color: string;
 }
+
+export interface BoxUpdateData {
+  id: number;
+  label: string;
+  description: string;
+  color: string;
+}

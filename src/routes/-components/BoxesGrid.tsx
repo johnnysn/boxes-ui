@@ -4,11 +4,13 @@ import type { ItemCreateData } from "../../lib/schemas/item";
 
 export default function BoxesGrid({
   boxes,
+  onEdit,
   onDelete,
   onAddedItem,
   onDeleteItem,
 }: {
   boxes: BoxShort[];
+  onEdit: (box: BoxShort) => void;
   onDelete: (id: number) => void;
   onAddedItem: (id: number, item: ItemCreateData) => void;
   onDeleteItem: (id: number) => void;
@@ -19,6 +21,7 @@ export default function BoxesGrid({
         <li key={b.id} className="max-w-sm">
           <BoxShortView
             box={b}
+            onEdit={() => onEdit(b)}
             onDelete={() => onDelete(b.id)}
             onAddedItem={(data) => onAddedItem(b.id, data)}
             onDeleteItem={onDeleteItem}
