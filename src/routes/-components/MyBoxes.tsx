@@ -17,9 +17,13 @@ import { addItem } from "../../lib/services/item-services";
 import { searchBoxes } from "../../lib/services/box-services";
 import { useToast } from "../../lib/providers/toast-context";
 import ConfirmModal from "../../lib/components/ui/ConfirmModal";
+import Paginator from "../../lib/components/ui/Paginator";
+
+const PAGE_SIZE = 2;
 
 export default function MyBoxes() {
   const [searchKey, setSearchKey] = useState({ label: "", description: "" });
+  const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
   const { user } = useContext(UserContext);
   const { showToast } = useToast();
@@ -30,9 +34,9 @@ export default function MyBoxes() {
     isPending: isPendingFetch,
     isError: isErrorFetch,
   } = useQuery({
-    queryKey: ["boxes", searchKey.label, searchKey.description],
+    queryKey: ["boxes", searchKey.label, searchKey.description, String(page)],
     queryFn: ({ queryKey }) =>
-      searchBoxes(queryKey[1], queryKey[2], user!.dataKey),
+      searchBoxes(queryKey[1], queryKey[2], page, PAGE_SIZE, user!.dataKey),
   });
 
   const handleSuccess = async () => {
@@ -151,6 +155,12 @@ export default function MyBoxes() {
               setEditingBox(b);
               setIsAdding(true);
             }}
+          />
+          <Paginator
+            page={page}
+            totalItems={data.page.totalElements}
+            size={PAGE_SIZE}
+            onPageChange={setPage}
           />
           <button
             type="button"

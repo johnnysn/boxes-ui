@@ -6,11 +6,13 @@ import { decryptItem } from "./item-services";
 export async function searchBoxes(
   label: string,
   description: string,
+  page: number,
+  size: number,
   dataKey: CryptoKey
 ) {
   return api
     .get<PagedResponse<BoxShort>>("/boxes", {
-      params: { label, description, or: true, size: 200 },
+      params: { label, description, or: true, size, page: page - 1 },
     })
     .then((d) => d.data)
     .then((data) => {

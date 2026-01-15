@@ -64,8 +64,10 @@ export default function BoxEdit({ boxData, onSubmitHandler, onClose }: Props) {
         />
 
         <div className="flex items-center justify-end gap-2">
-          <Button text="Cancel" color="sec" type="button" onClick={onClose} />
-          <Button text="Save" color="primary" />
+          <Button color="sec" type="button" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button color="primary">Save</Button>
         </div>
       </form>
     </div>
