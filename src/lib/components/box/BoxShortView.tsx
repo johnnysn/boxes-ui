@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import type { BoxShort } from "../../schemas/box";
-import { Trash2, PlusSquare, Edit } from "lucide-react";
+import { Trash2, PlusSquare, Edit, Layers } from "lucide-react";
 import type { ItemCreateData } from "../../schemas/item";
 import React, { useEffect, useRef, useState } from "react";
 import ItemView from "./ItemView";
@@ -24,6 +24,7 @@ export default function BoxShortView({
   const inputRef = useRef<HTMLInputElement>(null);
   const headerColor = `bg-${box.color.toLowerCase()}-700`;
   const bodyColor = `bg-${box.color.toLowerCase()}-400`;
+  const footerColor = `bg-${box.color.toLowerCase()}-700/50`;
 
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [newItemName, setNewItemName] = useState("");
@@ -44,6 +45,8 @@ export default function BoxShortView({
     setIsAddingItem(false);
     setNewItemName("");
   }
+
+  const itemsCount = box.items.length;
 
   return (
     <div
@@ -84,7 +87,7 @@ export default function BoxShortView({
         </div>
       </div>
 
-      <div className="flex-1 px-2 py-1">
+      <div className="flex-1 px-2 py-1 overflow-y-auto">
         <ul className="flex items-center flex-wrap gap-1.5">
           {isAddingItem && (
             <li>
@@ -110,7 +113,12 @@ export default function BoxShortView({
         </ul>
       </div>
 
-      <div className="h-6 text-xs py-1 px-2"></div>
+      <div
+        className={`h-6 text-xs py-1 px-2 ${footerColor} flex items-center gap-1 rounded-b justify-end text-gray-200`}
+      >
+        <Layers className="size-3" />
+        <span>{itemsCount} items</span>
+      </div>
     </div>
   );
 }
