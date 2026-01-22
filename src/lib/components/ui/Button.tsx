@@ -16,7 +16,7 @@ export default function Button({
   disabled,
 }: Props & HTMLAttributes<HTMLButtonElement>) {
   const baseStyles =
-    "min-w-[130px] font-semibold px-4 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "font-semibold px-4 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const primaryStyles =
     "bg-primary text-white hover:bg-orange-400 disabled:hover:bg-primary";

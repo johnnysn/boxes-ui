@@ -19,7 +19,7 @@ import { useToast } from "../../lib/providers/toast-context";
 import ConfirmModal from "../../lib/components/ui/ConfirmModal";
 import Paginator from "../../lib/components/ui/Paginator";
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 5;
 
 export default function MyBoxes() {
   const [searchKey, setSearchKey] = useState({ label: "", description: "" });

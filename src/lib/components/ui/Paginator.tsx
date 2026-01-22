@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Button from "./Button";
 
 interface Props {
@@ -21,7 +22,8 @@ export default function Paginator({
         onClick={() => onChangePage(page - 1)}
         disabled={page <= 1 || totalItems === 0}
       >
-        Previous Page
+        <span className="md:block hidden">Previous Page</span>
+        <ChevronLeft className="block md:hidden" />
       </Button>
 
       <span className="text-gray-700">
@@ -31,8 +33,10 @@ export default function Paginator({
       <Button
         onClick={() => onChangePage(page + 1)}
         disabled={page >= totalPages || totalItems === 0}
+        className="md:w-[130px]"
       >
-        Next Page
+        <span className="md:block hidden">Next Page</span>
+        <ChevronRight className="block md:hidden" />
       </Button>
     </div>
   );
