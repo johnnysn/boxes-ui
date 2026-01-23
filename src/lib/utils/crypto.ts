@@ -15,8 +15,8 @@ function base64ToBuffer(base64: string): Uint8Array {
 }
 
 export interface EncryptedPayload {
-  cipherText: string; // the encrypted text
-  iv: string; // Public initialization vector
+  cipherText: string; // o texto encriptado
+  iv: string; // vetor público de inicialização (evitar ataques de rainbow table)
 }
 
 export async function encryptText(
@@ -26,13 +26,13 @@ export async function encryptText(
 ): Promise<EncryptedPayload> {
   const enc = new TextEncoder();
 
-  // 1. Transform JSON or string into bytes
+  // 1. Transforma json em bytes
   const encodedData = enc.encode(text);
 
-  // 2. Generate the IV
+  // 2. Gera o iv vector
   if (!iv) iv = window.crypto.getRandomValues(new Uint8Array(12));
 
-  // 3. Encrypt using AES
+  // 3. Aplica criptografia AES
   const encryptedBuffer = await window.crypto.subtle.encrypt(
     {
       name: "AES-GCM",
@@ -42,7 +42,7 @@ export async function encryptText(
     encodedData
   );
 
-  // 4. Return everything in base64 to be sent via HTTP
+  // 4. Retorna tudo em base64 para envio via http.
   return {
     cipherText: bufferToBase64(encryptedBuffer),
     iv: bufferToBase64(iv),
@@ -69,9 +69,8 @@ export async function decryptText(
 }
 
 /**
- * Given the user password, we derive an authKey and a dataKey
- * The server will only know the authKey, so it would never be able to
- * infer the dataKey
+ * Dada a senha do usuário, nós derivamos uma authKey e uma dataKey
+ * o servidor só vai conhecer a authKey, sendo impossibilitado de inferir a dataKey
  *
  * @param password
  * @param saltBase64
@@ -87,10 +86,9 @@ export async function deriveKeys(password: string, saltBase64: string) {
     ["deriveKey"]
   );
 
-  // Convert Salt from Base64 to Buffer
   const salt = Uint8Array.from(atob(saltBase64), (c) => c.charCodeAt(0));
 
-  // Derive the Master Key
+  // Derivar a master key a partir da password e do salt
   const masterKey = await window.crypto.subtle.deriveKey(
     { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
     keyMaterial,
@@ -99,13 +97,12 @@ export async function deriveKeys(password: string, saltBase64: string) {
     ["encrypt", "decrypt"]
   );
 
-  // For this simple version, we will use the raw MasterKey for data
-  // and a Hash of the MasterKey for Login.
+  // Deriva a authKey a partir da master key
   const rawKey = await window.crypto.subtle.exportKey("raw", masterKey);
   const authKeyBuffer = await window.crypto.subtle.digest("SHA-256", rawKey);
 
-  // Convert to Base64 strings
-  const dataKey = masterKey; // Keep this object in memory
+  // Por motivo de simplicidade, vamos utilizar a própria masterKey como dataKey
+  const dataKey = masterKey;
   const authKey = btoa(String.fromCharCode(...new Uint8Array(authKeyBuffer)));
 
   return { dataKey, authKey };
